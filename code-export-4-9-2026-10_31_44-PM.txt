@@ -1,0 +1,94 @@
+
+
+Vehicle [icon: car, color: Green] {
+  vehicle_id string [pk]
+  license_plate string
+  category_id string [fk]
+  vehicle_class string
+  maker_model string
+  body_type string
+  fuel_type string
+  gross_vehicle_weight float
+  rc_status string
+  insurance_expiry date
+  createdAt datetime
+  updatedAt datetime
+}
+
+Vehicle_Category [icon: list] {
+  category_id string [pk]
+  category_name string // Bike, Sedan, SUV, Taxi, EV, Bus
+  base_rate float
+}
+
+Access_Group [icon: users] {
+  group_id string [pk]
+  group_name string // VIP, Cosplayer, Exhibitor, Staff, General
+  discount_rate float
+}
+
+Parking_Ticket [icon: ticket] {
+  ticket_id string [pk]
+  vehicle_id string [fk]
+  access_group_id string [fk]
+  valid_from datetime
+  valid_to datetime
+  issued_at datetime
+}
+
+Parking_Session [icon: clock] {
+  session_id string [pk]
+  ticket_id string [fk]
+  spot_id string [fk]
+  entry_time datetime
+  exit_time datetime
+  total_fee float
+  is_active boolean
+}
+
+Payment_Record [icon: credit-card] {
+  payment_id string [pk]
+  session_id string [fk]
+  amount float
+  payment_method string
+  paid_at datetime
+  status string
+  createdAt datetime
+  updatedAt datetime
+}
+
+Parking_Spot [icon: map-pin] {
+  spot_id string [pk]
+  zone_id string [fk]
+  spot_category_id string [fk]
+  spot_number string
+  status string
+  is_reserved boolean
+  updatedAt datetime
+}
+
+Spot_Category [icon: tag] {
+  spot_category_id string [pk]
+  category_name string // General, VIP, EV, Cosplayer, Exhibitor, Staff
+  allowed_vehicle_category string [fk]
+}
+
+Parking_Level_Zone [icon: layers] {
+  zone_id string [pk]
+  level_name string
+  zone_name string
+  zone_type string
+  total_spots int
+}
+
+
+
+Vehicle.category_id > Vehicle_Category.category_id
+Vehicle.vehicle_id < Parking_Ticket.vehicle_id
+Access_Group.group_id < Parking_Ticket.access_group_id
+Parking_Ticket.ticket_id < Parking_Session.ticket_id
+Parking_Session.session_id < Payment_Record.session_id
+Parking_Level_Zone.zone_id < Parking_Spot.zone_id
+Spot_Category.spot_category_id < Parking_Spot.spot_category_id
+Spot_Category.allowed_vehicle_category > Vehicle_Category.category_id
+Parking_Spot.spot_id < Parking_Session.spot_id
